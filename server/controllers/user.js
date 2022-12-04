@@ -35,7 +35,75 @@ function saveUser(req, res) {
   }
 }
 
+function seeUser(req, res) {
+  var params = req.body;
+  var email = params.email;
+
+  User.findOne({ email: email.toLowerCase() }, (err, user) => {
+    if (err) {
+      res.status(500).send({ message: "Request failed" });
+    } else {
+      if (!user) {
+        res.status(404).send({ message: "Incorrect credentials" });
+      } else {
+        res.status(200).send({ user });
+      }
+    }
+  });
+}
+
+function seeAllUsers(req, res) {
+  User.find((err, user) => {
+    if (err) {
+      res.status(500).send({ message: "Request failed" });
+    } else {
+      if (!user) {
+        res.status(404).send({ message: "Incorrect credentials" });
+      } else {
+        res.status(200).send({ user });
+      }
+    }
+  });
+}
+
+function updateUser(req, res) {
+  var userId = req.params.id;
+  var update = req.body;
+
+  User.findByIdAndUpdate(userId, update, (err, updatedUser) => {
+    if (err) {
+      res.status(500).send({ message: "Error updating user" });
+    } else {
+      if (!updatedUser) {
+        res.status(404).send({ message: "Couldn't update user" });
+      } else {
+        res.status(200).send({ user: updatedUser });
+      }
+    }
+  });
+}
+
+function deleteUser(req, res) {
+  var userId = req.params.id;
+
+  User.findByIdAndDelete(userId, (err, deletedUser) => {
+    if (err) {
+      res.status(500).send({ message: "Error deleting user" });
+    } else {
+      if (!deletedUser) {
+        res.status(404).send({ message: "Couldn't delete user" });
+      } else {
+        res.status(200).send({ user: deletedUser });
+      }
+    }
+  });
+}
+
 module.exports = {
   test,
   saveUser,
+  seeUser,
+  seeAllUsers,
+  updateUser,
+  deleteUser,
 };
